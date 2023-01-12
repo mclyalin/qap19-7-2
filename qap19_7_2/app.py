@@ -1,59 +1,178 @@
+import json
 import requests
+from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 
-BASE_URL = 'https://petfriends.skillfactory.ru'
-user = {
-  'email': 'xalax48121@xegge.com',
-  'password': 'KivAknZcs5yep'
-}
+class PetFriends:
+    """апи библиотека к веб приложению Pet Friends"""
 
-def get_auth_key(email: str, password: str):
-  endpoint = 'api/key'
-  url = f'{BASE_URL}/{endpoint}'
-  headers = {'email': email, 'password': password}
-  response = requests.get(url, headers=headers)
-  if response.status_code == 200:
-    return response.json().get('key')
+    def __init__(self):
+        self.base_url = 'https://petfriends1.herokuapp.com'
 
-auth_key = get_auth_key(user.get('email'), user.get('password'))
+    def get_api_key(self, email: str, password: str) -> json:
+        """Метод делает запрос к API сервера и возвращает статус запроса и результат в формате
+        JSON с уникальным ключем пользователя, найденного по указанным email и паролем"""
 
-def add_pet_simple(name: str, animal_type: str, age: int):
-  endpoint = 'api/create_pet_simple'
-  url = f'{BASE_URL}/{endpoint}'
-  headers = {'auth_key': auth_key}
-  data = {'name': name, 'animal_type': animal_type, 'age': age}
-  response = requests.post(url, headers=headers, data=data)
-  if response.status_code == 200:
-   return response.json()
+        endpoint = 'api/key'
+        url = f'{self.base_url}/{endpoint}'
+        headers = {
+            'email': email,
+            'password': password,
+        }
+        response = requests.get(url, headers=headers)
+        status = response.status_code
+        result = ''
+        try:
+            result = response.json()
+        except json.decoder.JSONDecodeError:
+            result = response.text
+        return status, result
 
-def get_pets(filter=''):
-  endpoint = 'api/pets'
-  url = f'{BASE_URL}/{endpoint}'
-  headers = {'auth_key': auth_key}
-  params = {'filter': filter}
-  response = requests.get(url, headers=headers, params=params)
-  if response.status_code == 200:
-    return response.json()
+    def get_list_of_pets(self, auth_key: json, filter: str = '') -> json:
+        """Метод делает запрос к API сервера и возвращает статус запроса и результат в формате JSON
+        со списком наденных питомцев, совпадающих с фильтром. На данный момент фильтр может иметь
+        либо пустое значение - получить список всех питомцев, либо 'my_pets' - получить список
+        собственных питомцев"""
 
-def remove_pet(id):
-  endpoint = 'api/pets'
-  url = f'{BASE_URL}/{endpoint}/{id}'
-  headers = {'auth_key': auth_key}
-  response = requests.delete(url, headers=headers)
-  return response.status_code
+        endpoint = 'api/pets'
+        url = f'{self.base_url}/{endpoint}'
+        headers = {'auth_key': auth_key['key']}
+        params = {'filter': filter}
+        response = requests.get(url, headers=headers, params=params)
+        status = response.status_code
+        result = ''
+        try:
+            result = response.json()
+        except json.decoder.JSONDecodeError:
+            result = response.text
+        return status, result
 
-def update_pet(id, **new_data):
-  items = get_pets('my_pets').get('pets')
-  filtered = filter(lambda item: item.get('id') == id, items)
-  current = list(filtered)[0]
-  data = {
-    'name': current.get('name'),
-    'animal_type': current.get('animal_type'),
-    'age': int(current.get('age'))
-  }
+    def add_new_pet_simple(self, auth_key: json, name: str, animal_type: str, age: str) -> json:
+        """Метод отправляет на сервер данные о добавляемом питомце без фотои возвращает статус
+        запроса на сервер и результат в формате JSON с данными добавленного питомца"""
 
-  endpoint = 'api/pets'
-  url = f'{BASE_URL}/{endpoint}/{id}'
-  headers = {'auth_key': auth_key}
-  response = requests.put(url, headers=headers, data={**data, **new_data})
-  return response.json()
+        endpoint = 'api/create_pet_simple'
+        url = f'{self.base_url}/{endpoint}'
+        headers = {'auth_key': auth_key['key']}
+        data = {
+            'name': name,
+            'animal_type': animal_type,
+            'age': age,
+        }
+        response = requests.post(url, headers=headers, data=data)
+        status = response.status_code
+        result = ''
+        try:
+            result = response.json()
+        except json.decoder.JSONDecodeError:
+            result = response.text
+        print(result)
+        return status, result
+
+    def add_new_pet(
+        self, auth_key: json, name: str, animal_type: str, age: str, pet_photo: str
+    ) -> json:
+        """Метод отправляет (постит) на сервер данные о добавляемом питомце и возвращает статус
+        запроса на сервер и результат в формате JSON с данными добавленного питомца"""
+
+        endpoint = 'api/pets'
+        url = f'{self.base_url}/{endpoint}'
+        data = MultipartEncoder(
+            fields={
+                'name': name,
+                'animal_type': animal_type,
+                'age': age,
+                'pet_photo': (pet_photo, open(pet_photo, 'rb'), 'image/jpeg'),
+            }
+        )
+        headers = {
+            'auth_key': auth_key['key'],
+            'Content-Type': data.content_type,
+        }
+        response = requests.post(url, headers=headers, data=data)
+        status = response.status_code
+        result = ''
+        try:
+            result = response.json()
+        except json.decoder.JSONDecodeError:
+            result = response.text
+        return status, result
+
+    def add_pet_photo(self, auth_key: json, pet_id: str, pet_photo: str) -> json:
+        """Метод отправляет на сервер фото питомца по указанному ID и возвращает статус
+        запроса на сервер и результат в формате JSON с данными обновленного питомца"""
+
+        endpoint = 'api/pets/set_photo'
+        url = f'{self.base_url}/{endpoint}/{pet_id}'
+        data = MultipartEncoder(
+            fields={'pet_photo': (pet_photo, open(pet_photo, 'rb'), 'image/jpeg')}
+        )
+        headers = {
+            'auth_key': auth_key['key'],
+            'Content-Type': data.content_type,
+        }
+        response = requests.post(url, headers=headers, data=data)
+        status = response.status_code
+        result = ''
+        try:
+            result = response.json()
+        except json.decoder.JSONDecodeError:
+            result = response.text
+        return status, result
+
+    def delete_pet(self, auth_key: json, pet_id: str) -> json:
+        """Метод отправляет на сервер запрос на удаление питомца по указанному ID и возвращает
+        статус запроса и результат в формате JSON с текстом уведомления о успешном удалении.
+        На сегодняшний день тут есть баг - в result приходит пустая строка, но status при этом = 200"""
+
+        endpoint = 'api/pets'
+        url = f'{self.base_url}/{endpoint}/{pet_id}'
+        headers = {'auth_key': auth_key['key']}
+        response = requests.delete(url, headers=headers)
+        status = response.status_code
+        result = ''
+        try:
+            result = response.json()
+        except json.decoder.JSONDecodeError:
+            result = response.text
+        return status, result
+
+    def update_pet_info(
+        self, auth_key: json, pet_id: str, name: str, animal_type: str, age: int
+    ) -> json:
+        """Метод отправляет запрос на сервер об обновлении данных питомца по указанному ID и
+        возвращает статус запроса и result в формате JSON с обновлённыи данными питомца"""
+
+        endpoint = 'api/pets'
+        url = f'{self.base_url}/{endpoint}/{pet_id}'
+        headers = {'auth_key': auth_key['key']}
+        data = {
+            'name': name,
+            'animal_type': animal_type,
+            'age': age,
+        }
+        response = requests.put(url, headers=headers, data=data)
+        status = response.status_code
+        result = ''
+        try:
+            result = response.json()
+        except json.decoder.JSONDecodeError:
+            result = response.text
+        return status, result
+
+
+# def update_pet(id, **new_data):
+#   items = get_pets('my_pets').get('pets')
+#   filtered = filter(lambda item: item.get('id') == id, items)
+#   current = list(filtered)[0]
+#   data = {
+#     'name': current.get('name'),
+#     'animal_type': current.get('animal_type'),
+#     'age': int(current.get('age'))
+#   }
+
+#   endpoint = 'api/pets'
+#   url = f'{BASE_URL}/{endpoint}/{id}'
+#   headers = {'auth_key': auth_key}
+#   response = requests.put(url, headers=headers, data={**data, **new_data})
+#   return response.json()
