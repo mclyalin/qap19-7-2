@@ -1,11 +1,12 @@
 test_data = {
-    'valid_email': 'xalax48121@xegge.com',
-    'valid_password': 'KivAknZcs5yep',
-    'pets': [
+    'email': 'xalax48121@xegge.com',
+    'password': 'KivAknZcs5yep',
+    'filter': 'my_pets',
+    'test_pets': [
       {
         'name': 'Барбоскин',
         'animal_type': 'двортерьер',
-        'age': 4,
+        'age': '4',
       },
       {
         'name': 'Суперкот',
