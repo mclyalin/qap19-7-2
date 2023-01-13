@@ -185,10 +185,20 @@ def test_failed_add_pet_simple_with_invalid_data():
     """Проверяем что запрос на добавление питомца с некорректными данными
     возвращает статус 400 и результат не содержит питомца"""
 
-    name, animal_type, age = test_pets[-1].values()
     _, auth_key = pf.get_api_key(valid_email, valid_password)
-    status, result = pf.add_new_pet_simple(auth_key, name, animal_type, age)
+    status, result = pf.add_new_pet_simple(auth_key, '', '', '')
 
-    assert status == 200
-    assert 'name' in result
-    assert result['name'] == name
+    assert status == 400
+    assert 'name' not in result
+
+def test_failed_add_pet_simple_with_script_in_name():
+    """Проверяем что запрос на добавление питомца с именем, содержащим код,
+    возвращает статус 400 и результат не содержит питомца"""
+
+    danger_name = '<script>alert("boom!")</script>'
+    _, animal_type, age = test_pets[0].values()
+    _, auth_key = pf.get_api_key(valid_email, valid_password)
+    status, result = pf.add_new_pet_simple(auth_key, danger_name, animal_type, age)
+
+    assert status == 400
+    assert 'name' not in result
