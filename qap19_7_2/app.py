@@ -66,7 +66,6 @@ class PetFriends:
             result = response.json()
         except json.decoder.JSONDecodeError:
             result = response.text
-        print(result)
         return status, result
 
     def add_new_pet(
@@ -77,12 +76,13 @@ class PetFriends:
 
         endpoint = 'api/pets'
         url = f'{self.base_url}/{endpoint}'
+        format = pet_photo.split('.')[-1]
         data = MultipartEncoder(
             fields={
                 'name': name,
                 'animal_type': animal_type,
                 'age': str(age),
-                'pet_photo': (pet_photo, open(pet_photo, 'rb'), 'image/jpeg'),
+                'pet_photo': (pet_photo, open(pet_photo, 'rb'), f'image/{format}'),
             }
         )
         headers = {
@@ -104,8 +104,9 @@ class PetFriends:
 
         endpoint = 'api/pets/set_photo'
         url = f'{self.base_url}/{endpoint}/{pet_id}'
+        format = pet_photo.split('.')[-1]
         data = MultipartEncoder(
-            fields={'pet_photo': (pet_photo, open(pet_photo, 'rb'), 'image/jpeg')}
+            fields={'pet_photo': (pet_photo, open(pet_photo, 'rb'), f'image/{format}')}
         )
         headers = {
             'auth_key': auth_key['key'],
@@ -159,20 +160,3 @@ class PetFriends:
         except json.decoder.JSONDecodeError:
             result = response.text
         return status, result
-
-
-# def update_pet(id, **new_data):
-#   items = get_pets('my_pets').get('pets')
-#   filtered = filter(lambda item: item.get('id') == id, items)
-#   current = list(filtered)[0]
-#   data = {
-#     'name': current.get('name'),
-#     'animal_type': current.get('animal_type'),
-#     'age': int(current.get('age'))
-#   }
-
-#   endpoint = 'api/pets'
-#   url = f'{BASE_URL}/{endpoint}/{id}'
-#   headers = {'auth_key': auth_key}
-#   response = requests.put(url, headers=headers, data={**data, **new_data})
-#   return response.json()
