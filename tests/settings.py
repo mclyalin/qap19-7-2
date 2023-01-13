@@ -19,7 +19,7 @@ test_data = {
         'age': 5,
       },
     ],
-    'photos': [
+    'images': [
       'images/pet1.png',
       'images/pet2.jpg'
     ],
