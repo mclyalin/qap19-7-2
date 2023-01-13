@@ -1,5 +1,5 @@
 import os
-from qap19_7_2.app import PetFriends
+from qap19_7_2.api import PetFriends
 from tests.settings import test_data
 
 pf = PetFriends()
