@@ -21,7 +21,8 @@ test_data = {
     ],
     'images': [
       'images/pet1.png',
-      'images/pet2.jpg'
+      'images/pet2.jpg',
+      'images/pet3.pdf'
     ],
 }
 
