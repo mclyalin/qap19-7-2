@@ -2,7 +2,7 @@ test_data = {
     'email': 'xalax48121@xegge.com',
     'password': 'KivAknZcs5yep',
     'filter': 'my_pets',
-    'test_pets': [
+    'pets': [
       {
         'name': 'Барбоскин',
         'animal_type': 'двортерьер',
