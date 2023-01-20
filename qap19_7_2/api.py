@@ -9,7 +9,7 @@ class PetFriends:
     def __init__(self):
         self.base_url = 'https://petfriends.skillfactory.ru'
 
-    def get_api_key(self, email: str, password: str) -> json:
+    def get_api_key(self, email: str, password: str) -> tuple:
         """Метод делает запрос к API сервера и возвращает статус запроса и результат в формате
         JSON с уникальным ключем пользователя, найденного по указанным email и паролем"""
 
@@ -25,7 +25,7 @@ class PetFriends:
         key = data.get('key')
         return status, key
 
-    def get_list_of_pets(self, auth_key: str, filter: str = '') -> json:
+    def get_list_of_pets(self, auth_key: str, filter: str = '') -> tuple:
         """Метод делает запрос к API сервера и возвращает статус запроса и результат в формате JSON
         со списком наденных питомцев, совпадающих с фильтром. На данный момент фильтр может иметь
         либо пустое значение - получить список всех питомцев, либо 'my_pets' - получить список
@@ -40,7 +40,7 @@ class PetFriends:
         result = response.json() if status == 200 else {}
         return status, result
 
-    def add_new_pet_simple(self, auth_key: str, name: str, animal_type: str, age: int) -> json:
+    def add_new_pet_simple(self, auth_key: str, name: str, animal_type: str, age: int) -> tuple:
         """Метод отправляет на сервер данные о добавляемом питомце без фотои возвращает статус
         запроса на сервер и результат в формате JSON с данными добавленного питомца"""
 
@@ -62,8 +62,7 @@ class PetFriends:
         return status, result
 
     def add_new_pet(
-        self, auth_key: str, name: str, animal_type: str, age: int, pet_photo: str
-    ) -> json:
+        self, auth_key: str, name: str, animal_type: str, age: int, pet_photo: str) -> tuple:
         """Метод отправляет (постит) на сервер данные о добавляемом питомце и возвращает статус
         запроса на сервер и результат в формате JSON с данными добавленного питомца"""
 
@@ -91,7 +90,7 @@ class PetFriends:
             result = response.text
         return status, result
 
-    def add_pet_photo(self, auth_key: str, pet_id: str, pet_photo: str) -> json:
+    def add_pet_photo(self, auth_key: str, pet_id: str, pet_photo: str) -> tuple:
         """Метод отправляет на сервер фото питомца по указанному ID и возвращает статус
         запроса на сервер и результат в формате JSON с данными обновленного питомца"""
 
@@ -114,7 +113,7 @@ class PetFriends:
             result = response.text
         return status, result
 
-    def delete_pet(self, auth_key: str, pet_id: str) -> json:
+    def delete_pet(self, auth_key: str, pet_id: str) -> tuple:
         """Метод отправляет на сервер запрос на удаление питомца по указанному ID и возвращает
         статус запроса и результат в формате JSON с текстом уведомления о успешном удалении.
         На сегодняшний день тут есть баг - в result приходит пустая строка, но status при этом = 200"""
@@ -132,8 +131,7 @@ class PetFriends:
         return status, result
 
     def update_pet_info(
-        self, auth_key: str, pet_id: str, name: str, animal_type: str, age: int
-    ) -> json:
+        self, auth_key: str, pet_id: str, name: str, animal_type: str, age: int) -> tuple:
         """Метод отправляет запрос на сервер об обновлении данных питомца по указанному ID и
         возвращает статус запроса и result в формате JSON с обновлённыи данными питомца"""
 
