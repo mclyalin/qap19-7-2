@@ -6,6 +6,16 @@ images = [
     'images/pet3.pdf',
     ]
 
+data = {
+    '255 symbols': 'x' * 255,
+    'more than 1000 symbols': 'x' * 1001,
+    'russian': 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя',
+    'RUSSIAN': 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'.upper(),
+    'chinese': '的一是不了人我在有他这为之大来以个中上们',
+    'specials': '|\\/!@#$%^&*()-_=+`~?"№;:[]{}',
+    'digit': 123,
+    }
+
 test_data = {
     'email': 'xalax48121@xegge.com',
     'password': 'KivAknZcs5yep',
