@@ -13,7 +13,7 @@ def session():
     data = {
         'store': store,
         'status': status,
-        'key': 'key',
+        'key': key,
         'filter': filter,
         'images': images,
     }

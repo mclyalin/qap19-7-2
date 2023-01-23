@@ -2,6 +2,16 @@ import pytest
 from tests.settings import data
 
 
+email = {
+  'blank': '',
+  'invalid': 'test@user.com',
+}
+
+password = {
+  'blank': '',
+  'invalid': 'password',
+}
+
 def test_get_api_key(session):
     """Проверяем что запрос api ключа возвращает статус 200
     и в результате содержится key"""
@@ -15,7 +25,7 @@ def test_get_api_key(session):
 ], ids = [
   'expired',
   *data.keys(),
-] )
+])
 def test_get_api_key_negative():
     """Проверяем что запрос api ключа возвращает статус 400
     и в результате не содержится key"""
