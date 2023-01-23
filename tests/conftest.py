@@ -1,23 +1,17 @@
 import pytest
 
-from utils.utils import get_auth_data, parse
-from tests.settings import token, filter, images
+from tests.utils import get_auth_data, parse
+from tests.settings import token
 from qap19_7_2.api import get_api_key, get_pets, delete_pet
 
 @pytest.fixture(scope='session', autouse=True)
 def session():
     email, password = get_auth_data(token)
-    response = parse(get_api_key(email, password))
+    response = get_api_key(email, password)
+    status, content, _ = parse(response)
+    key = content['key']
 
-    status = response['status']
-    key = response['content']['key']
-
-    data = {
-        'status': status,
-        'key': key,
-        'filter': filter,
-        'images': images,
-    }
+    return status, key
 
     yield data
 
