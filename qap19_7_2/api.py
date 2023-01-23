@@ -14,7 +14,7 @@ def parse(response):
 
     content_type = response.headers.get('content-type')
     if 'text/html' in content_type:
-        tree = lxml.html.fromstring(r.text)
+        tree = lxml.html.fromstring(response.text)
         header = tree.xpath('//h1/text()')[0]
         text = tree.xpath('//p/text()')[0]
         result['message'] = f'{header}. {text}'
