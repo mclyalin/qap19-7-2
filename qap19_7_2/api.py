@@ -1,29 +1,8 @@
-import lxml.html
 import requests
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 
 base_url = 'https://petfriends.skillfactory.ru'
-
-def parse(response):
-    result = {
-        'status': response.status_code,
-        'content': {},
-        'message': ''
-    }
-
-    content_type = response.headers.get('content-type')
-    if 'text/html' in content_type:
-        tree = lxml.html.fromstring(response.text)
-        header = tree.xpath('//h1/text()')[0]
-        text = tree.xpath('//p/text()')[0]
-        result['message'] = f'{header}. {text}'
-    elif 'application/json' in content_type:
-        result['content'] = response.json()
-    else:
-        raise Exception(f'Unknown content-type: {content_type}')
-
-    return result
 
 """API библиотека к веб приложению Pet Friends"""
 
@@ -39,7 +18,7 @@ def get_api_key(email: str, password: str) -> dict:
     }
 
     response = requests.get(url, headers=headers)
-    return parse(response)
+    return response
 
 def get_pets(auth_key: str, filter: str = '') -> dict:
     """Метод делает запрос к API сервера и возвращает статус запроса и результат в формате JSON
@@ -53,7 +32,7 @@ def get_pets(auth_key: str, filter: str = '') -> dict:
     params = {'filter': filter}
 
     response = requests.get(url, headers=headers, params=params)
-    return parse(response)
+    return response
 
 def add_pet_simple(auth_key: str, name: str, animal_type: str, age: int) -> dict:
     """Метод отправляет на сервер данные о добавляемом питомце без фотои возвращает статус
@@ -69,7 +48,7 @@ def add_pet_simple(auth_key: str, name: str, animal_type: str, age: int) -> dict
     }
 
     response = requests.post(url, headers=headers, data=data)
-    return parse(response)
+    return response
 
 def add_pet(auth_key: str, name: str, animal_type: str, age: int, pet_photo: str) -> dict:
     """Метод отправляет (постит) на сервер данные о добавляемом питомце и возвращает статус
@@ -90,7 +69,7 @@ def add_pet(auth_key: str, name: str, animal_type: str, age: int, pet_photo: str
     }
 
     response = requests.post(url, headers=headers, data=data)
-    return parse(response)
+    return response
 
 def add_pet_photo(self, auth_key: str, pet_id: str, pet_photo: str) -> tuple:
     """Метод отправляет на сервер фото питомца по указанному ID и возвращает статус
@@ -108,7 +87,7 @@ def add_pet_photo(self, auth_key: str, pet_id: str, pet_photo: str) -> tuple:
     }
 
     response = requests.post(url, headers=headers, data=data)
-    return parse(response)
+    return response
 
 def delete_pet(auth_key: str, pet_id: str) -> dict:
     """Метод отправляет на сервер запрос на удаление питомца по указанному ID и возвращает
@@ -120,7 +99,7 @@ def delete_pet(auth_key: str, pet_id: str) -> dict:
     headers = {'auth_key': auth_key}
 
     response = requests.delete(url, headers=headers)
-    return parse(response)
+    return response
 
 def update_pet(auth_key: str, pet_id: str, name: str, animal_type: str, age: int) -> dict:
     """Метод отправляет запрос на сервер об обновлении данных питомца по указанному ID и
@@ -136,4 +115,4 @@ def update_pet(auth_key: str, pet_id: str, name: str, animal_type: str, age: int
     }
 
     response = requests.put(url, headers=headers, data=data)
-    return parse(response)
+    return response

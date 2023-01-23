@@ -1,17 +1,18 @@
 import pytest
 
-from tests.utils import get_auth_data
+from utils.utils import get_auth_data, parse
 from tests.settings import token, filter, images
-from qap19_7_2.api import PetFriends
+from qap19_7_2.api import get_api_key, get_pets, delete_pet
 
 @pytest.fixture(scope='session', autouse=True)
 def session():
     email, password = get_auth_data(token)
-    store = PetFriends()
-    status, key = store.get_api_key(email, password)
+    response = parse(get_api_key(email, password))
+
+    status = response['status']
+    key = response['content']['key']
 
     data = {
-        'store': store,
         'status': status,
         'key': key,
         'filter': filter,
@@ -20,13 +21,13 @@ def session():
 
     yield data
 
-    _, result = store.get_list_of_pets(key, filter=filter)
-    pets = result.get('pets')
+    response = parse(get_pets(key, filter=filter))
+    pets = response['content']['pets']
 
     if not pets:
         return
 
     for pet in pets:
         id = pet.get('id')
-        store.delete_pet(key, id)
+        delete_pet(key, id)
 
