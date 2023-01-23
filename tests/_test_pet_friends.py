@@ -23,7 +23,7 @@ def test_get_all_pets_with_valid_key():
     запрашиваем список всех питомцев и проверяем что список не пустой"""
 
     _, auth_key = pf.get_api_key(valid_email, valid_password)
-    status, result = pf.get_list_of_pets(auth_key)
+    status, result = pf.get_pets(auth_key)
 
     assert status == 200
     assert 'pets' in result
@@ -47,19 +47,19 @@ def test_successful_delete_self_pet():
     """Проверяем возможность удаления питомца"""
 
     _, auth_key = pf.get_api_key(valid_email, valid_password)
-    _, my_pets = pf.get_list_of_pets(auth_key, filter)
+    _, my_pets = pf.get_pets(auth_key, filter)
 
     # Проверяем - если список своих питомцев пустой, то добавляем питомца
     # и снова запрашиваем список питомцев пользователя
     if len(my_pets['pets']) == 0:
         name, animal_type, age = test_pets[0].values()
-        pf.add_new_pet_simple(auth_key, name, animal_type, age)
-        _, my_pets = pf.get_list_of_pets(auth_key, filter)
+        pf.add_pet_simple(auth_key, name, animal_type, age)
+        _, my_pets = pf.get_pets(auth_key, filter)
 
     pet_id = my_pets['pets'][0]['id']
     status, _ = pf.delete_pet(auth_key, pet_id)
 
-    _, my_pets = pf.get_list_of_pets(auth_key, filter)
+    _, my_pets = pf.get_pets(auth_key, filter)
 
     assert status == 200
     assert pet_id not in str(my_pets)
@@ -69,18 +69,18 @@ def test_successful_update_self_pet_info():
     """Проверяем возможность обновления информации о питомце"""
 
     _, auth_key = pf.get_api_key(valid_email, valid_password)
-    _, my_pets = pf.get_list_of_pets(auth_key, filter)
+    _, my_pets = pf.get_pets(auth_key, filter)
 
     # Проверяем - если список своих питомцев пустой, то добавляем питомца
     # и снова запрашиваем список питомцев пользователя
     if len(my_pets['pets']) == 0:
         name, animal_type, age = test_pets[0].values()
-        pf.add_new_pet_simple(auth_key, name, animal_type, age)
-        _, my_pets = pf.get_list_of_pets(auth_key, filter)
+        pf.add_pet_simple(auth_key, name, animal_type, age)
+        _, my_pets = pf.get_pets(auth_key, filter)
 
     my_pet_id = my_pets['pets'][0]['id']
     name, animal_type, age = test_pets[1].values()
-    status, result = pf.update_pet_info(auth_key, my_pet_id, name, animal_type, age)
+    status, result = pf.update_pet(auth_key, my_pet_id, name, animal_type, age)
 
     assert status == 200
     assert 'name' in result
@@ -92,7 +92,7 @@ def test_add_pet_simple_with_valid_data():
 
     name, animal_type, age = test_pets[-1].values()
     _, auth_key = pf.get_api_key(valid_email, valid_password)
-    status, result = pf.add_new_pet_simple(auth_key, name, animal_type, age)
+    status, result = pf.add_pet_simple(auth_key, name, animal_type, age)
 
     assert status == 200
     assert 'name' in result
@@ -106,9 +106,9 @@ def test_get_user_pets_with_valid_key():
 
     name, animal_type, age = test_pets[0].values()
     _, auth_key = pf.get_api_key(valid_email, valid_password)
-    _, my_pet = pf.add_new_pet_simple(auth_key, name, animal_type, age)
+    _, my_pet = pf.add_pet_simple(auth_key, name, animal_type, age)
 
-    status, result = pf.get_list_of_pets(auth_key, filter)
+    status, result = pf.get_pets(auth_key, filter)
 
     assert status == 200
     assert 'pets' in result
@@ -120,14 +120,14 @@ def test_add_pet_png_photo_():
     """Проверяем что можно добавить питомцу фото в формате PNG"""
 
     _, auth_key = pf.get_api_key(valid_email, valid_password)
-    _, my_pets = pf.get_list_of_pets(auth_key, filter)
+    _, my_pets = pf.get_pets(auth_key, filter)
 
     # Проверяем - если список своих питомцев пустой, то добавляем питомца
     # и снова запрашиваем список питомцев пользователя
     if len(my_pets['pets']) == 0:
         name, animal_type, age = test_pets[0].values()
-        pf.add_new_pet_simple(auth_key, name, animal_type, age)
-        _, my_pets = pf.get_list_of_pets(auth_key, filter)
+        pf.add_pet_simple(auth_key, name, animal_type, age)
+        _, my_pets = pf.get_pets(auth_key, filter)
 
     my_pet_id = my_pets['pets'][0]['id']
     png = os.path.join(os.path.dirname(__file__), images[0])
@@ -142,14 +142,14 @@ def test_add_pet_jpg_photo_():
     """Проверяем что можно добавить питомцу фото в формате JPG"""
 
     _, auth_key = pf.get_api_key(valid_email, valid_password)
-    _, my_pets = pf.get_list_of_pets(auth_key, filter)
+    _, my_pets = pf.get_pets(auth_key, filter)
 
     # Проверяем - если список своих питомцев пустой, то добавляем питомца
     # и снова запрашиваем список питомцев пользователя
     if len(my_pets['pets']) == 0:
         name, animal_type, age = test_pets[0].values()
-        pf.add_new_pet_simple(auth_key, name, animal_type, age)
-        _, my_pets = pf.get_list_of_pets(auth_key, filter)
+        pf.add_pet_simple(auth_key, name, animal_type, age)
+        _, my_pets = pf.get_pets(auth_key, filter)
 
     my_pet_id = my_pets['pets'][0]['id']
     jpg = os.path.join(os.path.dirname(__file__), images[1])
@@ -188,7 +188,7 @@ def test_failed_get_all_pets_with_invalid_key():
 
     _, auth_key = pf.get_api_key(valid_email, valid_password)
     auth_key['key'] = auth_key['key'][::-1]
-    status, result = pf.get_list_of_pets(auth_key)
+    status, result = pf.get_pets(auth_key)
 
     assert status == 403
     assert 'pets' not in result
@@ -199,7 +199,7 @@ def test_failed_add_pet_simple_with_invalid_data():
     с некорректными данными возвращает статус 400 и результат не содержит питомца"""
 
     _, auth_key = pf.get_api_key(valid_email, valid_password)
-    status, result = pf.add_new_pet_simple(auth_key, '', '', '')
+    status, result = pf.add_pet_simple(auth_key, '', '', '')
 
     assert status == 400
     assert 'name' not in result
@@ -212,7 +212,7 @@ def test_failed_add_pet_simple_with_script_in_name():
     danger_name = '<script>alert("boom!")</script>'
     _, animal_type, age = test_pets[0].values()
     _, auth_key = pf.get_api_key(valid_email, valid_password)
-    status, result = pf.add_new_pet_simple(auth_key, danger_name, animal_type, age)
+    status, result = pf.add_pet_simple(auth_key, danger_name, animal_type, age)
 
     assert status == 400
     assert 'name' not in result
@@ -223,14 +223,14 @@ def test_failed_add_pet_pdf_photo_():
     в неподдерживаемом формате (PDF) возвращает статус 400 и результат не содержит питомца"""
 
     _, auth_key = pf.get_api_key(valid_email, valid_password)
-    _, my_pets = pf.get_list_of_pets(auth_key, filter)
+    _, my_pets = pf.get_pets(auth_key, filter)
 
     # Проверяем - если список своих питомцев пустой, то добавляем питомца
     # и снова запрашиваем список питомцев пользователя
     if len(my_pets['pets']) == 0:
         name, animal_type, age = test_pets[0].values()
-        pf.add_new_pet_simple(auth_key, name, animal_type, age)
-        _, my_pets = pf.get_list_of_pets(auth_key, filter)
+        pf.add_pet_simple(auth_key, name, animal_type, age)
+        _, my_pets = pf.get_pets(auth_key, filter)
 
     my_pet_id = my_pets['pets'][0]['id']
     pdf = os.path.join(os.path.dirname(__file__), images[-1])

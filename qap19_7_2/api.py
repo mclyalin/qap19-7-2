@@ -25,7 +25,7 @@ class PetFriends:
         key = data.get('key')
         return status, key
 
-    def get_list_of_pets(self, auth_key: str, filter: str = '') -> tuple:
+    def get_pets(self, auth_key: str, filter: str = '') -> tuple:
         """Метод делает запрос к API сервера и возвращает статус запроса и результат в формате JSON
         со списком наденных питомцев, совпадающих с фильтром. На данный момент фильтр может иметь
         либо пустое значение - получить список всех питомцев, либо 'my_pets' - получить список
@@ -40,7 +40,7 @@ class PetFriends:
         result = response.json() if status == 200 else {}
         return status, result
 
-    def add_new_pet_simple(self, auth_key: str, name: str, animal_type: str, age: int) -> tuple:
+    def add_pet_simple(self, auth_key: str, name: str, animal_type: str, age: int) -> tuple:
         """Метод отправляет на сервер данные о добавляемом питомце без фотои возвращает статус
         запроса на сервер и результат в формате JSON с данными добавленного питомца"""
 
@@ -61,7 +61,7 @@ class PetFriends:
             result = response.text
         return status, result
 
-    def add_new_pet(
+    def add_pet(
         self, auth_key: str, name: str, animal_type: str, age: int, pet_photo: str) -> tuple:
         """Метод отправляет (постит) на сервер данные о добавляемом питомце и возвращает статус
         запроса на сервер и результат в формате JSON с данными добавленного питомца"""
@@ -130,7 +130,7 @@ class PetFriends:
             result = response.text
         return status, result
 
-    def update_pet_info(
+    def update_pet(
         self, auth_key: str, pet_id: str, name: str, animal_type: str, age: int) -> tuple:
         """Метод отправляет запрос на сервер об обновлении данных питомца по указанному ID и
         возвращает статус запроса и result в формате JSON с обновлённыи данными питомца"""
