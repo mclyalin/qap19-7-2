@@ -1,23 +1,29 @@
 import pytest
-from tests.settings import data
+from tests.utils import parse, get_auth_data
+from qap19_7_2.api import get_api_key
 
 
-email = {
+invalid_emails = {
   'blank': '',
   'invalid': 'test@user.com',
 }
 
-password = {
+invalid_passwords = {
   'blank': '',
   'invalid': 'password',
 }
 
-def test_get_api_key(session):
+def test_get_key(session):
     """Проверяем что запрос api ключа возвращает статус 200
     и в результате содержится key"""
 
-    assert session['status'] == 200
-    assert session['key']
+    response = get_api_key(session['email'], session['password'])
+    status, data, message = parse(response)
+    assert status == 200, message
+    assert 'key' in data
+    key = data.get('key')
+    assert key
+
 
 # @pytest.mark.parametrize('key', [
 #   'ea738148a1f19838e1c5d1413877f3691a3731380e733e877b0ae729',
@@ -26,7 +32,7 @@ def test_get_api_key(session):
 #   'expired',
 #   *data.keys(),
 # ])
-# def test_get_api_key_negative():
+# def test_get_key_negative():
 #     """Проверяем что запрос api ключа возвращает статус 400
 #     и в результате не содержится key"""
 

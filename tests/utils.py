@@ -15,7 +15,7 @@ def get_auth_data(token: str) -> str:
 
 def parse(response):
     status = response.status_code
-    content = {}
+    data = {}
     message = ''
 
     content_type = response.headers.get('content-type')
@@ -25,8 +25,8 @@ def parse(response):
         text = tree.xpath('//p/text()')[0]
         message = f'{header}. {text}'
     elif 'application/json' in content_type:
-        content = response.json()
+        data = response.json()
     else:
         raise Exception(f'Unknown content-type: {content_type}')
 
-    return status, content, message
+    return status, data, message
