@@ -1,4 +1,4 @@
-###### Учебный проект QAP ([Skillfactory](https://skillfactory.ru)
+###### Учебный проект QAP ([Skillfactory](https://skillfactory.ru))
 ### Тестирование [REST API](https://petfriends.skillfactory.ru/apidocs/#/) сайта [Petfriends](https://petfriends.skillfactory.ru).  
 
 Что сделано:
