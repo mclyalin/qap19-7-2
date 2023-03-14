@@ -7,10 +7,9 @@
 - реализованы автотесты;
 
 В проекте применялись следующие инструменты:
-- сервис временной почты [tempmail+](https://tempmail.plus) для авторизации;
+- Chrome DevTools для анализа ответов сервера;
 - сервис [Random string generator](http://www.unit-conversion.info/texttools/random-string-generator/) для генерации тестовых данных;
 - техники граничных значений и классы эквивалентности для оптимизации тестовых данных;
-- Chrome DevTools для анализа ответов сервера;
 
 Тест-кейсы и сценарии доступны [здесь](https://docs.google.com/spreadsheets/d/1R-QJppMTwIR1tBF9a4v1Fets-pBpRIr9svnTjgOEfCY/edit?usp=sharing).
 ***
